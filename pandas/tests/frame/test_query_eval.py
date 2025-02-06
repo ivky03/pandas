@@ -40,6 +40,24 @@ def skip_if_no_pandas_parser(parser):
     if parser != "pandas":
         pytest.skip(f"cannot evaluate with parser={parser}")
 
+import pytest
+import pandas as pd
+from pandas import DataFrame
+from pandas.testing import assert_frame_equal
+
+class TestDataFrameQueryErrors:
+    """Tests for error handling in DataFrame queries."""
+
+    def test_query_with_duplicate_columns_error(self):
+        """Ensure querying DataFrame with duplicate column names raises ValueError."""
+        df = pd.DataFrame({
+            "A": range(5),
+            "B": range(5),
+            "C": range(5)
+        })
+        df.columns = ['A', 'B', 'A']  # create duplicate columns
+        with pytest.raises(ValueError, match="Query execution failed: DataFrame contains duplicate column names."):
+            df.query("A > 1")
 
 class TestCompat:
     @pytest.fixture
@@ -611,15 +629,7 @@ class TestDataFrameQueryNumExprPandas:
         )
  
 
-    def test_query_with_duplicate_columns_error():
-        df = pd.DataFrame({
-            "A": range(5),
-            "B": range(5),
-            "C": range(5)
-        })
-        df.columns = ['A', 'B', 'A']  # create duplicate columns
-        with pytest.raises(ValueError, match="Query execution failed: DataFrame contains duplicate column names."):
-            df.query("A > 1")
+    
 
     def test_query_index_with_name(self, engine, parser):
         df = DataFrame(
