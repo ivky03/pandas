@@ -3,6 +3,7 @@ from tokenize import TokenError
 
 import numpy as np
 import pytest
+import pandas as pd
 
 from pandas.errors import (
     NumExprClobberingError,
@@ -608,6 +609,17 @@ class TestDataFrameQueryNumExprPandas:
             df.query("a + b > b * c", engine=engine, parser=parser),
             df[df.a + df.b > df.b * df.c],
         )
+ 
+
+    def test_query_with_duplicate_columns_error():
+        df = pd.DataFrame({
+            "A": range(5),
+            "B": range(5),
+            "C": range(5)
+        })
+        df.columns = ['A', 'B', 'A']  # create duplicate columns
+        with pytest.raises(ValueError, match="Query execution failed: DataFrame contains duplicate column names."):
+            df.query("A > 1")
 
     def test_query_index_with_name(self, engine, parser):
         df = DataFrame(
