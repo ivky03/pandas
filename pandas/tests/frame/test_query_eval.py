@@ -40,9 +40,7 @@ def skip_if_no_pandas_parser(parser):
     if parser != "pandas":
         pytest.skip(f"cannot evaluate with parser={parser}")
 
-import pytest
-import pandas as pd
-from pandas import DataFrame
+
 from pandas.testing import assert_frame_equal
 
 class TestDataFrameQueryErrors:
