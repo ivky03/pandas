@@ -43,10 +43,9 @@ def skip_if_no_pandas_parser(parser):
 
 from pandas.testing import assert_frame_equal
 
-class TestDataFrameQueryErrors:
-    """Tests for error handling in DataFrame queries."""
 
-    def test_query_with_duplicate_columns_error(self):
+
+def test_query_with_duplicate_columns_error(self):
         """Ensure querying DataFrame with duplicate column names raises ValueError."""
         df = pd.DataFrame({
             "A": range(5),
