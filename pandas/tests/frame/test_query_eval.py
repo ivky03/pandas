@@ -45,16 +45,8 @@ from pandas.testing import assert_frame_equal
 
 
 
-def test_query_with_duplicate_columns_error():
-        """Ensure querying DataFrame with duplicate column names raises ValueError."""
-        df = pd.DataFrame({
-            "A": range(5),
-            "B": range(5),
-            "C": range(5)
-        })
-        df.columns = ['A', 'B', 'A']  # create duplicate columns
-        with pytest.raises(ValueError, match="Query execution failed: DataFrame contains duplicate column names."):
-            df.query("A > 1")
+
+
 
 class TestCompat:
     @pytest.fixture
@@ -146,7 +138,16 @@ class TestDataFrameEval:
         elif op in ["-", "/"]:
             result = getattr(df, rop)(m)
             tm.assert_frame_equal(result, expected)
-
+    def test_query_fails_with_duplicate_columns(self):
+        """Ensure querying DataFrame with duplicate column names raises ValueError."""
+        df = pd.DataFrame({
+            "A": range(5),
+            "B": range(5),
+            "C": range(5)
+        })
+        df.columns = ['A', 'B', 'A']  # create duplicate columns
+        with pytest.raises(ValueError, match="Query execution failed: DataFrame contains duplicate column names."):
+            df.query("A > 1")
     def test_dataframe_sub_numexpr_path(self):
         # GH7192: Note we need a large number of rows to ensure this
         #  goes through the numexpr path
